@@ -1,11 +1,11 @@
 // colorUtils.js — Oklab color math, all from scratch
 
 function srgbToLinear(c) {
-  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
 }
 
 function linearToSrgb(c) {
-  return c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+  return c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055;
 }
 
 function linearRgbToXyz(r, g, b) {
@@ -61,7 +61,7 @@ function oklabToXyz(L, a, b) {
   };
 }
 
-function hexToOklab(hex) {
+function _hexToOklab(hex) {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
   const b = parseInt(hex.slice(5, 7), 16) / 255;
@@ -69,17 +69,17 @@ function hexToOklab(hex) {
   return xyzToOklab(x, y, z);
 }
 
-function oklabToHex(L, a, b) {
+function _oklabToHex(L, a, b) {
   const { x, y, z } = oklabToXyz(L, a, b);
   const { r, g, b: bl } = xyzToLinearRgb(x, y, z);
   const clamp = (v) => Math.max(0, Math.min(1, v));
   const toHex = (v) => Math.round(clamp(linearToSrgb(v)) * 255).toString(16).padStart(2, '0');
-  return '#' + toHex(r) + toHex(g) + toHex(bl);
+  return `#${toHex(r)}${toHex(g)}${toHex(bl)}`;
 }
 
 // colorUnits: [{oklab: {L, a, b}, units: number}, ...]
 // Returns weighted average in Oklab space
-function mixColors(colorUnits) {
+function _mixColors(colorUnits) {
   let totalUnits = 0, sumL = 0, sumA = 0, sumB = 0;
   for (const { oklab, units } of colorUnits) {
     sumL += oklab.L * units;
@@ -101,7 +101,7 @@ function oklabDistance(c1, c2) {
 const OKLAB_MAX_DIST = 1.0;
 
 // Returns 0–100 (100 = exact match)
-function closeness(oklab1, oklab2) {
+function _closeness(oklab1, oklab2) {
   const dist = oklabDistance(oklab1, oklab2);
   return Math.max(0, Math.round((1 - dist / OKLAB_MAX_DIST) * 100));
 }
