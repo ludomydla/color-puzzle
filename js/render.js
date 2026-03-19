@@ -1,5 +1,5 @@
 // render.js — DOM rendering functions
-// Depends on: STATE, MAX_GUESSES (game.js), updateUnitCount (game.js),
+// Depends on: STATE, MAX_GUESSES (game.js), addToSlot/removeFromSlot (game.js),
 //             loadStats (game.js), renderUtils.js
 
 function renderTargetSwatch() {
@@ -8,35 +8,53 @@ function renderTargetSwatch() {
 
 function renderPalette() {
   const container = document.getElementById('palette');
+  const full = totalSelected() >= STATE.puzzle.totalUnits;
   container.innerHTML = '';
+
   for (const color of STATE.puzzle.availableColors) {
-    const count = STATE.currentUnits[color.name] || 0;
-    const card = document.createElement('div');
-    card.className = `color-card${count > 0 ? ' active' : ''}`;
-
-    card.innerHTML = `
-      <div class="swatch" style="background-color:${color.hex}"></div>
-      <div class="color-name">${color.name}</div>
-      <div class="unit-controls">
-        <button class="unit-btn minus" data-color="${color.name}" aria-label="Remove unit">−</button>
-        <span class="unit-count">${count}</span>
-        <button class="unit-btn plus" data-color="${color.name}" aria-label="Add unit">+</button>
-      </div>
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = `palette-chip${full ? ' full' : ''}`;
+    chip.disabled = full || STATE.won || STATE.lost;
+    chip.setAttribute('aria-label', `Add ${color.name}`);
+    chip.innerHTML = `
+      <span class="palette-chip-swatch" style="background-color:${color.hex}"></span>
+      <span class="palette-chip-name">${color.name}</span>
     `;
-    container.appendChild(card);
+    chip.addEventListener('click', () => addToSlot(color.name));
+    container.appendChild(chip);
   }
+}
 
-  container.querySelectorAll('.unit-btn.plus').forEach(btn => {
-    btn.addEventListener('click', () => updateUnitCount(btn.dataset.color, 1));
-  });
-  container.querySelectorAll('.unit-btn.minus').forEach(btn => {
-    btn.addEventListener('click', () => updateUnitCount(btn.dataset.color, -1));
-  });
+function renderCurrentGuess() {
+  const container = document.getElementById('current-guess');
+  container.innerHTML = '';
+  const total = STATE.puzzle.totalUnits;
+
+  for (let i = 0; i < total; i++) {
+    const slot = document.createElement('button');
+    slot.type = 'button';
+
+    if (i < STATE.currentSlots.length) {
+      const colorName = STATE.currentSlots[i];
+      const color = STATE.puzzle.availableColors.find(c => c.name === colorName);
+      slot.className = 'slot filled';
+      slot.style.backgroundColor = color.hex;
+      slot.setAttribute('aria-label', `Remove ${colorName}`);
+      slot.addEventListener('click', () => removeFromSlot(i));
+    } else {
+      slot.className = 'slot empty';
+      slot.disabled = true;
+      slot.setAttribute('aria-label', 'Empty slot');
+    }
+
+    container.appendChild(slot);
+  }
 }
 
 function renderUnitCounter() {
   document.getElementById('unit-counter').textContent =
-    `${totalSelected()} / ${STATE.puzzle.totalUnits} units`;
+    `${totalSelected()} / ${STATE.puzzle.totalUnits}`;
 }
 
 function renderSubmitBtn() {
@@ -53,19 +71,21 @@ function renderGuessHistory() {
     const row = document.createElement('div');
     row.className = 'guess-row';
 
-    const breakdown = STATE.puzzle.availableColors
-      .filter(c => g.units[c.name])
-      .map(c => `${g.units[c.name]}× ${c.name}`)
-      .join(', ');
+    // Build unit squares: one square per unit, ordered by availableColors
+    const unitSquares = STATE.puzzle.availableColors
+      .flatMap(c => Array(g.units[c.name] || 0).fill(
+        `<span class="history-slot" style="background-color:${c.hex}"></span>`
+      ))
+      .join('');
 
     row.innerHTML = `
-      <div class="guess-swatches">
-        <div class="guess-swatch" style="background-color:${g.mixedHex}" title="Your mix"></div>
-        <div class="guess-swatch target-mini" style="background-color:${STATE.puzzle.targetHex}" title="Target"></div>
-      </div>
-      <div class="guess-info">
+      <div class="guess-slots">${unitSquares}</div>
+      <div class="guess-result">
+        <div class="guess-swatches">
+          <div class="guess-swatch" style="background-color:${g.mixedHex}" title="Your mix"></div>
+          <div class="guess-swatch target-mini" style="background-color:${STATE.puzzle.targetHex}" title="Target"></div>
+        </div>
         <span class="guess-pct${g.pct === 100 ? ' exact' : ''}">${g.pct}%</span>
-        <span class="guess-breakdown">${breakdown}</span>
       </div>
     `;
     row.style.animationDelay = `${i * 0.05}s`;
@@ -84,15 +104,20 @@ function showResultModal() {
   document.getElementById('modal-title').textContent = STATE.won ? 'Nice mix! 🎨' : 'Out of attempts';
 
   const s = loadStats();
-  const recipeLines = Object.entries(STATE.puzzle.recipe)
-    .map(([name, units]) => `${units}× ${name}`)
-    .join(', ');
+
+  const recipeSquares = STATE.lost
+    ? STATE.puzzle.availableColors
+        .flatMap(c => Array(STATE.puzzle.recipe[c.name] || 0).fill(
+          `<span class="history-slot" style="background-color:${c.hex}"></span>`
+        ))
+        .join('')
+    : '';
 
   document.getElementById('modal-body').innerHTML = `
     <div class="modal-swatches">
       <div class="modal-swatch" style="background-color:${STATE.puzzle.targetHex}"></div>
     </div>
-    <p class="modal-recipe">Recipe: ${recipeLines}</p>
+    ${STATE.lost ? `<div class="modal-recipe-slots">${recipeSquares}</div>` : ''}
     <div class="modal-stats">
       <div><strong>${s.gamesPlayed || 0}</strong><span>Played</span></div>
       <div><strong>${s.wins || 0}</strong><span>Wins</span></div>

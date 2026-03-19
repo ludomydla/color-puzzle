@@ -89,10 +89,11 @@
   border: 2px solid rgba(255 255 255 / 0.15);
 }
 
-.modal-recipe {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  text-align: center;
+.modal-recipe-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
 }
 
 .modal-stats {

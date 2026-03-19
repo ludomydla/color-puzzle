@@ -31,12 +31,21 @@
 
     <!-- Available palette -->
     <section id="palette-section" aria-label="Available colors">
-      <p class="section-label">Mix <span id="unit-counter">0 / ? units</span></p>
+      <p class="section-label">Colors</p>
       <div id="palette"></div>
     </section>
 
-    <!-- Submit -->
-    <button id="submit-btn" type="button" disabled>Mix It</button>
+    <!-- Current guess slots + submit -->
+    <section id="current-guess-section" aria-label="Current mix">
+      <div class="guess-label-row">
+        <p class="section-label">Your mix</p>
+        <span id="unit-counter">0 / ?</span>
+      </div>
+      <div class="current-guess-row">
+        <div id="current-guess" aria-live="polite"></div>
+        <button id="submit-btn" type="button" disabled>Mix It</button>
+      </div>
+    </section>
 
     <!-- Guess history -->
     <section id="guess-history" aria-label="Guess history" aria-live="polite"></section>

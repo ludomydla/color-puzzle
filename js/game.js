@@ -6,7 +6,8 @@
 const STATE = {
   puzzle: null,          // from generatePuzzle
   guesses: [],           // [{units: {colorName: count}, mixedHex, mixedOklab, pct}]
-  currentUnits: {},      // colorName → count (in-progress guess)
+  currentSlots: [],      // ordered array of colorNames for the in-progress guess
+  currentUnits: {},      // colorName → count, derived from currentSlots
   won: false,
   lost: false,
 };
@@ -16,16 +17,33 @@ const MAX_GUESSES = 6;
 // ─── Game Logic ───────────────────────────────────────────────────────────────
 
 function totalSelected() {
-  return Object.values(STATE.currentUnits).reduce((s, n) => s + n, 0);
+  return STATE.currentSlots.length;
 }
 
-function updateUnitCount(colorName, delta) {
-  const current = STATE.currentUnits[colorName] || 0;
-  const next = current + delta;
-  if (next < 0) return;
-  if (totalSelected() + delta > STATE.puzzle.totalUnits) return;
-  STATE.currentUnits[colorName] = next;
+function recomputeUnits() {
+  STATE.currentUnits = {};
+  for (const name of STATE.currentSlots) {
+    STATE.currentUnits[name] = (STATE.currentUnits[name] || 0) + 1;
+  }
+}
+
+function addToSlot(colorName) {
+  if (STATE.won || STATE.lost) return;
+  if (STATE.currentSlots.length >= STATE.puzzle.totalUnits) return;
+  STATE.currentSlots.push(colorName);
+  recomputeUnits();
   renderPalette();
+  renderCurrentGuess();
+  renderUnitCounter();
+  renderSubmitBtn();
+}
+
+function removeFromSlot(index) {
+  if (STATE.won || STATE.lost) return;
+  STATE.currentSlots.splice(index, 1);
+  recomputeUnits();
+  renderPalette();
+  renderCurrentGuess();
   renderUnitCounter();
   renderSubmitBtn();
 }
@@ -67,10 +85,12 @@ function submitGuess() {
     saveStats(false);
   }
 
+  STATE.currentSlots = [];
   STATE.currentUnits = {};
 
   renderGuessHistory();
   renderPalette();
+  renderCurrentGuess();
   renderUnitCounter();
   renderSubmitBtn();
 
@@ -112,6 +132,7 @@ function init() {
 
   renderTargetSwatch();
   renderPalette();
+  renderCurrentGuess();
   renderUnitCounter();
   renderSubmitBtn();
   renderStreak();

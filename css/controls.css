@@ -1,102 +1,141 @@
+/* ─── Palette chips ─────────────────────────────────────────────────────────── */
+
 #palette {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
 }
 
-.color-card {
+.palette-chip {
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.6rem;
+  padding: 0.5rem 0.5rem 0.4rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  flex: 1 1 calc(50% - 0.6rem);
-  min-width: 120px;
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.color-card.active {
-  border-color: var(--accent);
-  background: var(--surface-2);
-}
-
-.color-card .swatch {
-  width: 100%;
-  height: 3rem;
-}
-
-.color-name {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-.color-card.active .color-name {
-  color: var(--text);
-}
-
-.unit-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.unit-btn {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  font-size: 1.1rem;
-  line-height: 1;
+  gap: 0.35rem;
+  flex: 1 1 calc(33% - 0.6rem);
+  min-width: 90px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.1s, border-color 0.1s;
+  transition: border-color 0.15s, background 0.15s, opacity 0.15s;
   touch-action: manipulation;
 }
 
-.unit-btn:hover {
-  background: var(--accent-dim);
+.palette-chip:hover:not(:disabled) {
   border-color: var(--accent);
+  background: var(--surface-2);
 }
 
-.unit-btn:active {
-  transform: scale(0.92);
+.palette-chip:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
-.unit-count {
-  font-size: 1.1rem;
-  font-weight: 700;
-  min-width: 1.2rem;
+.palette-chip.full,
+.palette-chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.palette-chip-swatch {
+  display: block;
+  width: 100%;
+  height: 2.8rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid rgba(255 255 255 / 0.12);
+}
+
+.palette-chip-name {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
+
+/* ─── Current guess slots ───────────────────────────────────────────────────── */
+
+#current-guess-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.guess-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.current-guess-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+#current-guess {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 2.8rem;
+  align-content: flex-start;
+}
+
+.slot {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.15s;
+  touch-action: manipulation;
+}
+
+.slot.filled {
+  border-color: rgba(255 255 255 / 0.2);
+}
+
+.slot.filled:hover {
+  border-color: #e05;
+  transform: scale(0.9);
+}
+
+.slot.filled:active {
+  transform: scale(0.82);
+}
+
+.slot.empty {
+  background: var(--surface);
+  border-style: dashed;
+  cursor: default;
+}
+
+/* ─── Unit counter & submit ─────────────────────────────────────────────────── */
 
 #unit-counter {
-  color: var(--text);
-  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
 #submit-btn {
-  width: 100%;
-  padding: 0.85rem;
+  flex-shrink: 0;
+  padding: 0.7rem 1.1rem;
   border-radius: var(--radius);
   border: none;
   background: var(--accent);
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: background 0.15s, opacity 0.15s;
   touch-action: manipulation;
+  align-self: stretch;
 }
 
 #submit-btn:hover:not(:disabled) {
@@ -109,7 +148,7 @@
 }
 
 @media (min-width: 520px) {
-  .color-card {
-    flex: 1 1 calc(33% - 0.6rem);
+  .palette-chip {
+    flex: 1 1 calc(25% - 0.6rem);
   }
 }

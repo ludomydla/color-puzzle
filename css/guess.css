@@ -8,10 +8,11 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.6rem 0.75rem;
+  padding: 0.5rem 0.6rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: space-between;
+  gap: 0.6rem;
   animation: fadeSlideIn 0.25s ease both;
 }
 
@@ -20,44 +21,56 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.guess-swatches {
+/* Left: color unit squares */
+.guess-slots {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.3rem;
+  flex: 1;
+  align-content: center;
+}
+
+.history-slot {
+  display: block;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid rgba(255 255 255 / 0.12);
   flex-shrink: 0;
 }
 
+/* Right: mixed + target swatches + pct */
+.guess-result {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.guess-swatches {
+  display: flex;
+  gap: 0.25rem;
+}
+
 .guess-swatch {
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: var(--radius-sm);
   border: 2px solid rgba(255 255 255 / 0.12);
 }
 
 .guess-swatch.target-mini {
-  opacity: 0.6;
-}
-
-.guess-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
+  opacity: 0.55;
 }
 
 .guess-pct {
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-muted);
+  min-width: 3rem;
+  text-align: right;
 }
 
 .guess-pct.exact {
   color: var(--success);
-}
-
-.guess-breakdown {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
