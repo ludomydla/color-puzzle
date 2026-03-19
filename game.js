@@ -19,7 +19,7 @@ function totalSelected() {
   return Object.values(STATE.currentUnits).reduce((s, n) => s + n, 0);
 }
 
-function _updateUnitCount(colorName, delta) {
+function updateUnitCount(colorName, delta) {
   const current = STATE.currentUnits[colorName] || 0;
   const next = current + delta;
   if (next < 0) return;

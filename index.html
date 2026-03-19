@@ -3,11 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="description" content="A daily color mixing puzzle game">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
   <title>Color Mix</title>
 </head>
 <body>
-  <p>Open DevTools console to test color utilities.</p>
+
+  <!-- Header -->
+  <header id="header">
+    <h1>Color Mix</h1>
+    <span id="streak"></span>
+  </header>
+
+  <main>
+
+    <!-- Target color -->
+    <section id="target-section" aria-label="Target color">
+      <p class="section-label">Target</p>
+      <div id="target-swatch" class="swatch swatch--large" aria-label="Target color swatch"></div>
+    </section>
+
+    <!-- Available palette -->
+    <section id="palette-section" aria-label="Available colors">
+      <p class="section-label">Mix <span id="unit-counter">0 / ? units</span></p>
+      <div id="palette"></div>
+    </section>
+
+    <!-- Submit -->
+    <button id="submit-btn" disabled>Mix It</button>
+
+    <!-- Guess history -->
+    <section id="guess-history" aria-label="Guess history" aria-live="polite"></section>
+
+  </main>
+
+  <!-- Toast notification -->
+  <div id="toast" role="status" aria-live="assertive"></div>
+
+  <!-- Result modal -->
+  <div id="result-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal-card">
+      <button id="modal-close" aria-label="Close">&times;</button>
+      <h2 id="modal-title"></h2>
+      <div id="modal-body"></div>
+      <button id="share-btn">Share Result</button>
+    </div>
+  </div>
+
   <script src="colorUtils.js"></script>
   <script src="hashUtils.js"></script>
+  <script src="renderUtils.js"></script>
+  <script src="render.js"></script>
+  <script src="game.js"></script>
 </body>
 </html>
