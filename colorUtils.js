@@ -61,7 +61,7 @@ function oklabToXyz(L, a, b) {
   };
 }
 
-function _hexToOklab(hex) {
+function hexToOklab(hex) {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
   const b = parseInt(hex.slice(5, 7), 16) / 255;
@@ -69,7 +69,7 @@ function _hexToOklab(hex) {
   return xyzToOklab(x, y, z);
 }
 
-function _oklabToHex(L, a, b) {
+function oklabToHex(L, a, b) {
   const { x, y, z } = oklabToXyz(L, a, b);
   const { r, g, b: bl } = xyzToLinearRgb(x, y, z);
   const clamp = (v) => Math.max(0, Math.min(1, v));
@@ -79,7 +79,7 @@ function _oklabToHex(L, a, b) {
 
 // colorUnits: [{oklab: {L, a, b}, units: number}, ...]
 // Returns weighted average in Oklab space
-function _mixColors(colorUnits) {
+function mixColors(colorUnits) {
   let totalUnits = 0, sumL = 0, sumA = 0, sumB = 0;
   for (const { oklab, units } of colorUnits) {
     sumL += oklab.L * units;
@@ -101,7 +101,7 @@ function oklabDistance(c1, c2) {
 const OKLAB_MAX_DIST = 1.0;
 
 // Returns 0–100 (100 = exact match)
-function _closeness(oklab1, oklab2) {
+function closeness(oklab1, oklab2) {
   const dist = oklabDistance(oklab1, oklab2);
   return Math.max(0, Math.round((1 - dist / OKLAB_MAX_DIST) * 100));
 }
