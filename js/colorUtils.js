@@ -103,5 +103,5 @@ const OKLAB_MAX_DIST = 1.0;
 // Returns 0–100 (100 = exact match)
 function closeness(oklab1, oklab2) {
   const dist = oklabDistance(oklab1, oklab2);
-  return Math.max(0, Math.round((1 - dist / OKLAB_MAX_DIST) * 100));
+  return Math.max(0, Math.floor((1 - dist / OKLAB_MAX_DIST) * 100));
 }
