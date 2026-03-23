@@ -40,13 +40,7 @@ const PALETTE = [
 
 // --- Difficulty ---
 
-function difficultyTier(dayOfWeek) {
-  // 0=Sun, 1=Mon, ..., 6=Sat
-  if (dayOfWeek === 1 || dayOfWeek === 2) return { minColors: 2, maxColors: 3, minUnits: 3, maxUnits: 4 };
-  if (dayOfWeek === 3 || dayOfWeek === 4) return { minColors: 3, maxColors: 4, minUnits: 4, maxUnits: 6 };
-  if (dayOfWeek === 5 || dayOfWeek === 6) return { minColors: 4, maxColors: 5, minUnits: 5, maxUnits: 7 };
-  /* Sunday */                             return { minColors: 5, maxColors: 6, minUnits: 6, maxUnits: 8 };
-}
+const DIFFICULTY = { numColors: 4, totalUnits: 7 };
 
 // --- Helpers ---
 
@@ -95,11 +89,9 @@ const MAX_ATTEMPTS = 100;
 function generatePuzzle(date) {
   const seed = dateToSeed(date);
   const rng = mulberry32(seed);
-  const tier = difficultyTier(date.getDay());
-
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const numColors = randInt(tier.minColors, tier.maxColors, rng);
-    const totalUnits = randInt(tier.minUnits, tier.maxUnits, rng);
+    const numColors = DIFFICULTY.numColors;
+    const totalUnits = DIFFICULTY.totalUnits;
 
     // Ensure totalUnits ≥ numColors (each needs ≥1 unit)
     if (totalUnits < numColors) continue;
