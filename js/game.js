@@ -31,6 +31,8 @@ function addToSlot(colorName) {
   if (STATE.won || STATE.lost) return;
   if (STATE.currentSlots.length >= STATE.puzzle.totalUnits) return;
   STATE.currentSlots.push(colorName);
+  const order = STATE.puzzle.availableColors.map(c => c.name);
+  STATE.currentSlots.sort((a, b) => order.indexOf(a) - order.indexOf(b));
   recomputeUnits();
   renderPalette();
   renderCurrentGuess();
