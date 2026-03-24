@@ -96,6 +96,9 @@ function submitGuess() {
   renderUnitCounter();
   renderSubmitBtn();
 
+  const newestRow = document.querySelector('#guess-history .guess-row:last-child');
+  if (newestRow) animateUnitsToSwatch(newestRow);
+
   if (STATE.won || STATE.lost) setTimeout(showResultModal, 600);
 }
 

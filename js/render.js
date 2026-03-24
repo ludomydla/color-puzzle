@@ -93,6 +93,62 @@ function renderGuessHistory() {
   }
 }
 
+function animateUnitsToSwatch(rowEl) {
+  const slots = [...rowEl.querySelectorAll('.history-slot')];
+  const swatchEl = rowEl.querySelector('.guess-swatch');
+  if (!swatchEl || !slots.length) return;
+
+  // Cancel the row's CSS animation so getBoundingClientRect() returns stable coords
+  rowEl.style.animation = 'none';
+
+  const swatchRect = swatchEl.getBoundingClientRect();
+  const targetX = swatchRect.left + swatchRect.width / 2;
+  const swatchCenterY = swatchRect.top + swatchRect.height / 2;
+
+  swatchEl.style.opacity = '0';
+  swatchEl.style.transition = 'none';
+
+  const stagger = 40;
+  const duration = 350;
+
+  const clones = slots.map(slot => {
+    const rect = slot.getBoundingClientRect();
+    const el = document.createElement('span');
+    Object.assign(el.style, {
+      position: 'fixed',
+      left: `${rect.left}px`,
+      top: `${swatchCenterY - rect.height / 2}px`,
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+      borderRadius: '4px',
+      backgroundColor: getComputedStyle(slot).backgroundColor,
+      opacity: '0.8',
+      pointerEvents: 'none',
+      zIndex: '9999',
+    });
+    document.body.appendChild(el);
+    return { el, rect };
+  });
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      clones.forEach(({ el, rect }, i) => {
+        const dx = targetX - rect.left - rect.width / 2;
+        el.style.transition = `transform ${duration}ms cubic-bezier(0.4,0,0.2,1) ${i * stagger}ms, opacity ${duration * 0.35}ms ease ${i * stagger + duration * 0.65}ms`;
+        el.style.transform = `translateX(${dx}px)`;
+        el.style.opacity = '0';
+      });
+
+      const totalTime = duration + (clones.length - 1) * stagger + 60;
+      setTimeout(() => {
+        clones.forEach(({ el }) => { el.remove(); });
+        swatchEl.style.transition = 'opacity 0.22s ease';
+        swatchEl.style.opacity = '1';
+      }, totalTime);
+    });
+  });
+}
+
 function renderStreak() {
   const s = loadStats();
   const el = document.getElementById('streak');
