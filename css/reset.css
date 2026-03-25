@@ -59,7 +59,7 @@ main {
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text);
   margin-bottom: 0.5rem;
   display: flex;
   gap: 0.5rem;

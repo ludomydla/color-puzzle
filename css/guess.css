@@ -62,7 +62,7 @@
 .guess-pct {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text);
   min-width: 3rem;
   text-align: right;
 }
